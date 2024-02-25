@@ -60,3 +60,42 @@ export const sendVerificationMail = async (token: string, profile: Profile) => {
     ],
   });
 };
+
+interface Options {
+  email: string;
+  link: string;
+}
+
+export const sendForgotPasswordLink = async (options: Options) => {
+  const transport = generateMailTransporter();
+
+  const { email, link } = options;
+
+  const resetPasswordMessage = `We received your request for forgot password. Please use the link below to reset your password`;
+
+  transport.sendMail({
+    to: email,
+    from: VERIFICATION_EMAIL,
+    subject: 'Reset Password',
+    html: generateTemplate({
+      title: 'Reset Password',
+      message: resetPasswordMessage,
+      logo: 'cid:logo',
+      banner: 'cid:forget_password',
+      link,
+      btnTitle: 'Reset Password',
+    }),
+    attachments: [
+      {
+        filename: 'logo.png',
+        path: path.join(__dirname, '../mail/logo.png'),
+        cid: 'logo',
+      },
+      {
+        filename: 'forget_password.png',
+        path: path.join(__dirname, '../mail/forget_password.png'),
+        cid: 'forget_password',
+      },
+    ],
+  });
+};
