@@ -1,11 +1,14 @@
 import { RequestHandler } from 'express';
 import { isValidObjectId } from 'mongoose';
+import crypto from 'crypto';
 
 import { CreateUser, VerifyEmailRequest } from '../@types/user';
 import EmailVerificationToken from '../models/emailVerificationToken';
+import PasswordResetToken from '../models/passwordResetToken';
 import User from '../models/user';
 import { generateToken } from '../utils/helper';
 import { sendVerificationMail } from '../utils/mail';
+import { PASSWORD_RESET_LINK } from '../utils/variables';
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
   const { email, password, name } = req.body;
@@ -75,4 +78,23 @@ export const sendReVerificationToken: RequestHandler = async (req, res) => {
   });
 
   res.json({ message: 'Please Check your email!' });
+};
+
+export const generateForgotPasswordLink: RequestHandler = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) return res.status(404).json({ error: 'Acoount not found' });
+
+  const token = crypto.randomBytes(36).toString('hex');
+
+  await PasswordResetToken.create({
+    owner: user._id,
+    token,
+  });
+
+  const resetLink = `${PASSWORD_RESET_LINK}?token=${token}&userId=${user._id}`;
+
+  res.json({ resetLink });
 };
