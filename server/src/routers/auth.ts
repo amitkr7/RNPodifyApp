@@ -3,10 +3,11 @@ import { Router } from 'express';
 import {
   create,
   generateForgotPasswordLink,
+  handleValidation,
   sendReVerificationToken,
   verifyEmail,
-  verifyResetPasswordToken,
 } from '../controllers/user';
+import { verifyResetPasswordToken } from '../middleware/auth';
 import { validate } from '../middleware/validator';
 import {
   CreateUserSchema,
@@ -22,7 +23,8 @@ router.post('/forgot-password', generateForgotPasswordLink);
 router.post(
   '/verify-reset-pass-token',
   validate(TokenAndIdValidation),
-  verifyResetPasswordToken
+  verifyResetPasswordToken,
+  handleValidation
 );
 
 export default router;

@@ -102,21 +102,6 @@ export const generateForgotPasswordLink: RequestHandler = async (req, res) => {
 
   res.json({ message: 'Please check your registered mail!' });
 };
-export const verifyResetPasswordToken: RequestHandler = async (req, res) => {
-  const { token, userId } = req.body;
-
-  const resetToken = await PasswordResetToken.findOne({ owner: userId });
-  if (!resetToken)
-    return res
-      .status(403)
-      .json({ error: 'Unauthorized Access, Invalid Token!' });
-
-  const matched = await resetToken.compareToken(token);
-
-  if (!matched)
-    return res
-      .status(403)
-      .json({ error: 'Unauthorized Access, Invalid Token!' });
-
-  res.json({ message: 'Your token is valid' });
+export const handleValidation: RequestHandler = async (req, res) => {
+  res.json({ valid: true });
 };
