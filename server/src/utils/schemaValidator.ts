@@ -32,3 +32,25 @@ export const TokenAndIdValidation = yup.object().shape({
     })
     .required('Invalid UserId'),
 });
+
+export const updatePasswordSchema = yup.object().shape({
+  token: yup.string().trim().required('Invalid Token'),
+  userId: yup
+    .string()
+    .transform(function (value) {
+      if (this.isType(value) && isValidObjectId(value)) {
+        return value;
+      }
+      return '';
+    })
+    .required('Invalid UserId'),
+  password: yup
+    .string()
+    .trim()
+    .required('Password is missing!')
+    .min(8, 'Password should be atleast 8 character!')
+    .matches(
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%^&\*])[a-zA-Z\d!@#\$%^&\*]+$/,
+      'Password does not match pattern'
+    ),
+});

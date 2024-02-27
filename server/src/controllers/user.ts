@@ -7,7 +7,11 @@ import EmailVerificationToken from '../models/emailVerificationToken';
 import PasswordResetToken from '../models/passwordResetToken';
 import User from '../models/user';
 import { generateToken } from '../utils/helper';
-import { sendForgotPasswordLink, sendVerificationMail } from '../utils/mail';
+import {
+  sendForgotPasswordLink,
+  sendResetPasswordSuccessMail,
+  sendVerificationMail,
+} from '../utils/mail';
 import { PASSWORD_RESET_LINK } from '../utils/variables';
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
@@ -102,6 +106,27 @@ export const generateForgotPasswordLink: RequestHandler = async (req, res) => {
 
   res.json({ message: 'Please check your registered mail!' });
 };
+
 export const handleValidation: RequestHandler = async (req, res) => {
   res.json({ valid: true });
+};
+
+export const updatePassword: RequestHandler = async (req, res) => {
+  const { password, userId } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(403).json({ error: 'Unauthorized Access!!' });
+
+  const matched = await user.comparePassword(password);
+  if (matched)
+    return res.status(422).json({ error: 'Old password cannot be used' });
+
+  user.password = password;
+  user.save();
+
+  await PasswordResetToken.findOneAndDelete({ owner: user._id });
+
+  sendResetPasswordSuccessMail(user.name, user.email);
+
+  res.json({ message: 'Password Reset Successfully' });
 };

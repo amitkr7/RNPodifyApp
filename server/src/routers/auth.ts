@@ -5,6 +5,7 @@ import {
   generateForgotPasswordLink,
   handleValidation,
   sendReVerificationToken,
+  updatePassword,
   verifyEmail,
 } from '../controllers/user';
 import { verifyResetPasswordToken } from '../middleware/auth';
@@ -12,6 +13,7 @@ import { validate } from '../middleware/validator';
 import {
   CreateUserSchema,
   TokenAndIdValidation,
+  updatePasswordSchema,
 } from '../utils/schemaValidator';
 
 const router = Router();
@@ -25,6 +27,12 @@ router.post(
   validate(TokenAndIdValidation),
   verifyResetPasswordToken,
   handleValidation
+);
+router.post(
+  '/update-password',
+  validate(updatePasswordSchema),
+  verifyResetPasswordToken,
+  updatePassword
 );
 
 export default router;
