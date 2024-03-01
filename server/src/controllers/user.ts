@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { isValidObjectId } from 'mongoose';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 import { CreateUser, VerifyEmailRequest } from '../@types/user';
 import EmailVerificationToken from '../models/emailVerificationToken';
@@ -12,7 +13,7 @@ import {
   sendResetPasswordSuccessMail,
   sendVerificationMail,
 } from '../utils/mail';
-import { PASSWORD_RESET_LINK } from '../utils/variables';
+import { JWT_SECRET, PASSWORD_RESET_LINK } from '../utils/variables';
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
   const { email, password, name } = req.body;
@@ -129,4 +130,42 @@ export const updatePassword: RequestHandler = async (req, res) => {
   sendResetPasswordSuccessMail(user.name, user.email);
 
   res.json({ message: 'Password Reset Successfully' });
+};
+
+export const signIn: RequestHandler = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (!user)
+    return res.status(403).json({ error: 'Email/Password does not match!' });
+
+  const matched = await user.comparePassword(password);
+  if (!matched)
+    return res.status(403).json({ error: 'Email/Password does not match!' });
+
+  const token = jwt.sign(
+    {
+      userId: user._id,
+    },
+    JWT_SECRET
+  );
+  user.tokens.push(token);
+
+  await user.save();
+
+  res.json({
+    profile: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      verified: user.verified,
+      avatar: user.avatar?.url,
+      followers: user.followers.length,
+      followings: user.followings.length,
+    },
+    token,
+  });
 };

@@ -13,7 +13,7 @@ interface UserDocument {
   tokens: string[];
   favorites: ObjectId[];
   followers: ObjectId[];
-  following: ObjectId[];
+  followings: ObjectId[];
 }
 
 interface Methods {
@@ -58,7 +58,7 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
         ref: 'User',
       },
     ],
-    following: [
+    followings: [
       {
         type: Schema.Types.ObjectId,
         ref: 'User',

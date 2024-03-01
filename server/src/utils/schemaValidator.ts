@@ -54,3 +54,8 @@ export const updatePasswordSchema = yup.object().shape({
       'Password does not match pattern'
     ),
 });
+
+export const SignInValidationSchema = yup.object().shape({
+  email: yup.string().required('Email is mandatory').email('Invalid Email!'),
+  password: yup.string().trim().required('Password is missing'),
+});
