@@ -4,11 +4,13 @@ import {
   create,
   generateForgotPasswordLink,
   handleValidation,
+  sendProfile,
   sendReVerificationToken,
   signIn,
   updatePassword,
+  updateProfile,
   verifyEmail,
-} from '../controllers/user';
+} from '../controllers/auth';
 import { authenticateUser, verifyResetPasswordToken } from '../middleware/auth';
 import fileParser, { RequestWithFiles } from '../middleware/fileParser';
 import { validate } from '../middleware/validator';
@@ -38,13 +40,8 @@ router.post(
   updatePassword
 );
 router.post('/sign-in', validate(SignInValidationSchema), signIn);
-router.get('/is-auth', authenticateUser, (req, res) => {
-  res.json({ profile: req.user });
-});
+router.get('/is-auth', authenticateUser, sendProfile);
 
-router.post('/update-profile', fileParser, (req: RequestWithFiles, res) => {
-  console.log(req.files);
-  res.json({ uploaded: true });
-});
+router.post('/update-profile', authenticateUser, fileParser, updateProfile);
 
 export default router;
