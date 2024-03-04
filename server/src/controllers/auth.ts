@@ -211,6 +211,21 @@ export const updateProfile: RequestHandler = async (
 
   res.json({ profile: formatProfile(user) });
 };
+
 export const sendProfile: RequestHandler = async (req, res) => {
   res.json({ profile: req.user });
+};
+
+export const logOut: RequestHandler = async (req, res) => {
+  const { fromAll } = req.query;
+
+  const token = req.token;
+  const user = await User.findById(req.user.id);
+  if (!user) throw new Error('Something went Wrong, User not found');
+
+  if (fromAll === 'yes') user.tokens = [];
+  else user.tokens = user.tokens.filter((item) => item !== token);
+
+  await user.save();
+  res.json({ success: true });
 };

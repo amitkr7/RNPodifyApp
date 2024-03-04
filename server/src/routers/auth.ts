@@ -4,6 +4,7 @@ import {
   create,
   generateForgotPasswordLink,
   handleValidation,
+  logOut,
   sendProfile,
   sendReVerificationToken,
   signIn,
@@ -43,5 +44,6 @@ router.post('/sign-in', validate(SignInValidationSchema), signIn);
 router.get('/is-auth', authenticateUser, sendProfile);
 
 router.post('/update-profile', authenticateUser, fileParser, updateProfile);
+router.post('/log-out', authenticateUser, logOut);
 
 export default router;
