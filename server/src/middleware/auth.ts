@@ -52,3 +52,10 @@ export const authenticateUser: RequestHandler = async (req, res, next) => {
 
   next();
 };
+
+export const isVerified: RequestHandler = async (req, res, next) => {
+  if (!req.user.verified)
+    return res.status(403).json({ error: 'Please Verify your email account!' });
+
+  next();
+};
