@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createAudio } from '../controllers/audio';
+import { createAudio, updateAudio } from '../controllers/audio';
 import { authenticateUser, isVerified } from '../middleware/auth';
 import fileParser from '../middleware/fileParser';
 import { validate } from '../middleware/validator';
@@ -14,6 +14,15 @@ router.post(
   fileParser,
   validate(AudioValidationSchema),
   createAudio
+);
+
+router.patch(
+  '/:audioId',
+  authenticateUser,
+  isVerified,
+  fileParser,
+  validate(AudioValidationSchema),
+  updateAudio
 );
 
 export default router;
