@@ -1,10 +1,11 @@
 import { Model, model, ObjectId, Schema } from 'mongoose';
 import { categories, categoriesTypes } from '../utils/audio_category';
 
-export interface AudioDocument {
+export interface AudioDocument<T = ObjectId> {
+  _id: ObjectId;
   title: string;
   about: string;
-  owner: ObjectId;
+  owner: T;
   file: {
     url: string;
     publicId: string;
