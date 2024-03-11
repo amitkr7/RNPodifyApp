@@ -7,7 +7,7 @@ import { NewPlaylistValidationSchema } from '../utils/schemaValidator';
 const router = Router();
 
 router.post(
-  'create',
+  '/create',
   authenticateUser,
   isVerified,
   validate(NewPlaylistValidationSchema),
