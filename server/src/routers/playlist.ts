@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { createPlaylist, updatePlaylist } from '../controllers/playlist';
+import {
+  createPlaylist,
+  removePlaylist,
+  updatePlaylist,
+} from '../controllers/playlist';
 import { authenticateUser, isVerified } from '../middleware/auth';
 import { validate } from '../middleware/validator';
 import {
@@ -23,5 +27,6 @@ router.patch(
   validate(OldPlaylistValidationSchema),
   updatePlaylist
 );
+router.delete('/', authenticateUser, removePlaylist);
 
 export default router;
