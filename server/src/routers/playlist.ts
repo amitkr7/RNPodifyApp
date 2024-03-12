@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createPlaylist,
+  getPlaylistByProfile,
   removePlaylist,
   updatePlaylist,
 } from '../controllers/playlist';
@@ -28,5 +29,6 @@ router.patch(
   updatePlaylist
 );
 router.delete('/', authenticateUser, removePlaylist);
+router.get('/by-profile', authenticateUser, getPlaylistByProfile);
 
 export default router;
