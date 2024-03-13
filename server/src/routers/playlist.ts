@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createPlaylist,
+  getAudios,
   getPlaylistByProfile,
   removePlaylist,
   updatePlaylist,
@@ -30,5 +31,6 @@ router.patch(
 );
 router.delete('/', authenticateUser, removePlaylist);
 router.get('/by-profile', authenticateUser, getPlaylistByProfile);
+router.get('/:playlistId', authenticateUser, getAudios);
 
 export default router;
