@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express';
 import { isValidObjectId } from 'mongoose';
+import { paginationQuery } from '../@types/misc';
+import Audio from '../models/audio';
 import User from '../models/user';
 
 export const updateFollower: RequestHandler = async (req, res) => {
@@ -51,4 +53,27 @@ export const updateFollower: RequestHandler = async (req, res) => {
     );
   }
   return res.json({ status });
+};
+
+export const getUploads: RequestHandler = async (req, res) => {
+  const { page = '0', limit = '20' } = req.query as paginationQuery;
+
+  const data = await Audio.find({ owner: req.user.id })
+    .skip(parseInt(limit) * parseInt(page))
+    .limit(parseInt(limit))
+    .sort('-createdAt');
+
+  const audios = data.map((item) => {
+    return {
+      id: item._id,
+      title: item.title,
+      about: item.about,
+      file: item.file.url,
+      poster: item.poster?.url,
+      date: item.createdAt,
+      owner: { name: req.user.name, id: req.user.id },
+    };
+  });
+
+  res.json({ audios });
 };
