@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  getPublicProfile,
   getPublicUploads,
   getUploads,
   updateFollower,
@@ -11,5 +12,6 @@ const router = Router();
 router.post('/update-profile/:profileId', authenticateUser, updateFollower);
 router.get('/uploads', authenticateUser, getUploads);
 router.get('/uploads/:profileId', getPublicUploads);
+router.get('/info/:profileId', getPublicProfile);
 
 export default router;
