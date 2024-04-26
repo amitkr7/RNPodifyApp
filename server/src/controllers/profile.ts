@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { isValidObjectId, ObjectId } from 'mongoose';
 import { paginationQuery } from '../@types/misc';
 import Audio, { AudioDocument } from '../models/audio';
+import Playlist from '../models/playlist';
 import User from '../models/user';
 
 export const updateFollower: RequestHandler = async (req, res) => {
@@ -111,7 +112,7 @@ export const getPublicProfile: RequestHandler = async (req, res) => {
     return res.status(422).json({ erorr: 'Invalid profile Id' });
 
   const user = await User.findById(profileId);
-  if (!user) return res.status(422).json({ error: 'User not found!' });
+  if (!user) return res.status(404).json({ error: 'User not found!' });
 
   res.json({
     profile: {
@@ -120,5 +121,33 @@ export const getPublicProfile: RequestHandler = async (req, res) => {
       followers: user.followers.length,
       avatar: user.avatar?.url,
     },
+  });
+};
+export const getPublicPlaylist: RequestHandler = async (req, res) => {
+  const { profileId } = req.params;
+  const { page = '0', limit = '20' } = req.query as paginationQuery;
+
+  if (!isValidObjectId(profileId))
+    return res.status(422).json({ erorr: 'Invalid profile Id' });
+
+  const playlist = await Playlist.find({
+    owner: profileId,
+    visibility: 'public',
+  })
+    .skip(parseInt(limit) * parseInt(page))
+    .limit(parseInt(limit))
+    .sort('-createdAt');
+
+  if (!playlist) return res.json({ playlist: [] });
+
+  res.json({
+    playlist: playlist.map((item) => {
+      return {
+        id: item._id,
+        title: item.title,
+        itemsCount: item.items.length,
+        visibility: item.visibility,
+      };
+    }),
   });
 };
