@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import { removeHistory, updateHistory } from '../controllers/history';
+import {
+  getHistories,
+  removeHistory,
+  updateHistory,
+} from '../controllers/history';
 import { authenticateUser } from '../middleware/auth';
 import { validate } from '../middleware/validator';
 import { UpdateHistoryValidationSchema } from '../utils/schemaValidator';
@@ -13,5 +17,6 @@ router.post(
   updateHistory
 );
 router.delete('/', authenticateUser, removeHistory);
+router.get('/', authenticateUser, getHistories);
 
 export default router;
