@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getHistories,
+  getRecentlyPlayed,
   removeHistory,
   updateHistory,
 } from '../controllers/history';
@@ -18,5 +19,6 @@ router.post(
 );
 router.delete('/', authenticateUser, removeHistory);
 router.get('/', authenticateUser, getHistories);
+router.get('/recently-played', authenticateUser, getRecentlyPlayed);
 
 export default router;
