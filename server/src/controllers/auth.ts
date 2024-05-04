@@ -21,6 +21,10 @@ import { RequestWithFiles } from '../middleware/fileParser';
 export const create: RequestHandler = async (req: CreateUser, res) => {
   const { email, password, name } = req.body;
 
+  const oldUser = await User.findOne({ email });
+  if (oldUser)
+    return res.status(403).json({ error: 'Email is already in Use!' });
+
   // const user = new User({ email, password, name })
   // user.save()
 

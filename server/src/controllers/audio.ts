@@ -36,7 +36,7 @@ export const createAudio: RequestHandler = async (
     about,
     category,
     owner: ownerId,
-    file: { url: audioRes.url, publicId: audioRes.public_id },
+    file: { url: audioRes.secure_url, publicId: audioRes.public_id },
   });
 
   if (poster) {
@@ -46,7 +46,10 @@ export const createAudio: RequestHandler = async (
       crop: 'thumb',
       gravity: 'face',
     });
-    newAudio.poster = { url: posterRes.url, publicId: posterRes.public_id };
+    newAudio.poster = {
+      url: posterRes.secure_url,
+      publicId: posterRes.public_id,
+    };
   }
 
   await newAudio.save();
