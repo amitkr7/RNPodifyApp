@@ -1,3 +1,4 @@
+import { profile } from 'console';
 import { RequestHandler } from 'express';
 import moment from 'moment';
 import { isValidObjectId, ObjectId, PipelineStage, Types } from 'mongoose';
@@ -556,4 +557,14 @@ export const getPrivatePlaylistAudios: RequestHandler = async (req, res) => {
   }
 
   res.json({ list: playlistResult });
+};
+
+export const getIsFollowing: RequestHandler = async (req, res) => {
+  const { profileId } = req.params;
+
+  if (!isValidObjectId(profileId))
+    return res.status(422).json({ error: 'Invalid profile Id!' });
+
+  const user = await User.findOne({ id: profileId, followers: req.user.id });
+  res.json({ status: user ? true : false });
 };
